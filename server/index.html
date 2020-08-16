@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+  <style type="text/css">
+      body {
+          margin: 0;
+      }
+  </style>
 </head>
 <body>
 
@@ -10,12 +15,30 @@
       type: Phaser.AUTO,
       width: 800,
       height: 600,
+      physics: {
+        default: 'arcade',
+        arcade: {
+          gravity: { y: 300 },
+          debug: false
+        }
+      },
+
       scene: {
           preload: preload,
           create: create,
           update: update
       }
   };
+
+  var cursors;
+  var player;
+  var score = 0;
+  var scoreText;
+  var platforms;
+  var gameOver = false;
+
+  var times = 0;
+  var debugText;
 
   var game = new Phaser.Game(config);
 
@@ -33,11 +56,98 @@
 
   function create ()
   {
+    //Background
     this.add.image(400,300, 'sky');
+
+    //Platforms
+    platforms = this.physics.add.staticGroup();
+
+    platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+
+    platforms.create(600, 400, 'ground');
+    platforms.create(50, 250, 'ground');
+    platforms.create(750, 220, 'ground');
+
+    //Player character and animations
+    player = this.physics.add.sprite(100, 450, 'dude');
+    player.setBounce(0.2);
+    player.setCollideWorldBounds(true);
+    this.anims.create({
+        key: 'left',
+        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1
+    });
+
+    this.anims.create({
+        key: 'turn',
+        frames: [ { key: 'dude', frame: 4 } ],
+        frameRate: 20
+    });
+
+    this.anims.create({
+        key: 'right',
+        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+    });
+
+    //Physics colliders
+    this.physics.add.collider(player, platforms);
+
+    //Score
+    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+
+    //Input
+    cursors = this.input.keyboard.createCursorKeys();
+
+    //Debug
+    debugText = this.add.text(100, 200);
   }
 
-  function update ()
+  function update (time, delta)
   {
+    //Game Over
+    if (gameOver)
+    {
+      return;
+    }
+
+    //Input
+    if (cursors.left.isDown)
+    {
+      player.setVelocityX(-160);
+
+      player.anims.play('left', true);
+    }
+    else if (cursors.right.isDown)
+    {
+      player.setVelocityX(160);
+
+      player.anims.play('right', true);
+    }
+    else
+    {
+      player.setVelocityX(0);
+
+      player.anims.play('turn');
+    }
+
+    if (cursors.up.isDown && player.body.touching.down)
+    {
+      player.setVelocityY(-330);
+    }
+
+    //Score update
+    collectStar(time, delta);
+  }
+
+  function collectStar (time, delta) {
+    times+=1;
+    score += 10;
+    scoreText.setText('Score: ' + score);
+    debugText.setText("Number of updates per second : " + times/time*1000 + "\nLast delta time : " + (delta));
+
   }
 </script>
 
