@@ -37,7 +37,7 @@
   var platforms;
   var gameOver = false;
 
-  var times = 0;
+  var ticks = 0;
   var debugText;
 
   var game = new Phaser.Game(config);
@@ -48,9 +48,9 @@
     this.load.image('ground', 'assets/platform.png');
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
-    this.load.spritesheet('dude',
-        'assets/dude.png',
-        { frameWidth: 32, frameHeight: 48 }
+    this.load.spritesheet('werewolf',
+        'sprites/werewolf.png',
+        { frameWidth: 64, frameHeight: 64 }
     );
   }
 
@@ -69,25 +69,25 @@
     platforms.create(750, 220, 'ground');
 
     //Player character and animations
-    player = this.physics.add.sprite(100, 450, 'dude');
+    player = this.physics.add.sprite(100, 450, 'werewolf');
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frames: this.anims.generateFrameNumbers('werewolf', { start: 0, end: 3 }),
         frameRate: 10,
         repeat: -1
     });
 
     this.anims.create({
         key: 'turn',
-        frames: [ { key: 'dude', frame: 4 } ],
+        frames: [ { key: 'werewolf', frame: 4 } ],
         frameRate: 20
     });
 
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frames: this.anims.generateFrameNumbers('werewolf', { start: 5, end: 8 }),
         frameRate: 10,
         repeat: -1
     });
@@ -107,6 +107,8 @@
 
   function update (time, delta)
   {
+    ticks+=1;
+
     //Game Over
     if (gameOver)
     {
@@ -139,16 +141,18 @@
     }
 
     //Score update
-    collectStar(time, delta);
+    IncreaseScoreForSurviving(time, delta);
+    UpdateScoreUI();
   }
 
-  function collectStar (time, delta) {
-    times+=1;
+  function IncreaseScoreForSurviving (time, delta) {
     score += 10;
-    scoreText.setText('Score: ' + score);
-    debugText.setText("Number of updates per second : " + times/time*1000 + "\nLast delta time : " + (delta));
-
+    debugText.setText("Average number of updates per second : " + ticks/time*1000 + "\nLast delta time : " + (delta));
   }
+  function UpdateScoreUI(){
+    scoreText.setText('Score: ' + score);
+  }
+
 </script>
 
 </body>
