@@ -5,7 +5,7 @@ var config = {
     physics: {
       default: 'arcade',
       arcade: {
-        gravity: { y: 300 },
+        gravity: { y: 1000 },
         debug: false
       }
     },
@@ -31,41 +31,6 @@ var ticks = 0;
 var game = new Phaser.Game(config);
 
 
-var FlyingStar = new Phaser.Class({
-
-    Extends: Phaser.Physics.Arcade.Sprite,
-
-    initialize:
-
-    function FlyingStar (scene, x, y, width, height, speed)
-    {
-        Phaser.Physics.Arcade.Sprite.call(this, scene, x, y, 'star');
-
-        //  This is the path the sprite will follow
-        this.path = new Phaser.Curves.Ellipse(x, y, width, height);
-        this.pathIndex = 0;
-        this.pathSpeed = speed;
-        this.pathVector = new Phaser.Math.Vector2();
-
-        this.path.getPoint(0, this.pathVector);
-
-        this.setPosition(this.pathVector.x, this.pathVector.y);
-    },
-
-    preUpdate: function (time, delta)
-    {
-        this.anims.update(time, delta);
-
-        this.path.getPoint(this.pathIndex, this.pathVector);
-
-        this.setPosition(this.pathVector.x, this.pathVector.y);
-
-        this.pathIndex = Phaser.Math.Wrap(this.pathIndex + this.pathSpeed, 0, 1);
-    }
-
-});
-
-
 function preload ()
 {
   this.load.image('sky', 'assets/sky.png');
@@ -85,6 +50,7 @@ function create ()
   //Floor
   floors = this.physics.add.staticGroup();
   floors.create(400,600, 'floor').setScale(2).refreshBody();
+
   //Platforms
   platforms = this.physics.add.staticGroup();
 
@@ -93,6 +59,7 @@ function create ()
   platforms.create(600, 400, 'ground');
   platforms.create(50, 250, 'ground');
   platforms.create(750, 220, 'ground');
+
 
   //Player character and animations
   player = this.physics.add.sprite(400, 450, 'werewolf');
@@ -163,7 +130,7 @@ function update (time, delta)
 
   if (cursors.up.isDown && player.body.touching.down)
   {
-    player.setVelocityY(-330);
+    player.setVelocityY(-800);
   }
 
   //Score update
