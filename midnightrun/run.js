@@ -33,9 +33,9 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
-  this.load.image('sky', 'assets/sky.png');
-  this.load.image('ground', 'assets/platform.png');
-  this.load.image('floor', 'assets/floor.png');
+  this.load.image('sky', 'sprites/sky.png');
+  this.load.image('ground', 'sprites/platform.png');
+  this.load.image('floor', 'sprites/floor.png');
   this.load.spritesheet('werewolf',
       'sprites/werewolf.png',
       { frameWidth: 64, frameHeight: 64 }
@@ -90,8 +90,8 @@ function create ()
   this.physics.add.collider(player, floors, fallDown, null, this);
 
   //Texts
-  scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-  gameOverText = this.add.text(230, 300, '', { fontSize: '64px', fill: '#000' });
+  scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#fff' });
+  gameOverText = this.add.text(230, 300, '', { fontSize: '64px', fill: '#fff' });
 
   //Input
   cursors = this.input.keyboard.createCursorKeys();
